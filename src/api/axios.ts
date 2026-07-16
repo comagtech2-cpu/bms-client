@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
 const api = axios.create({
-  baseURL: "http://localhost:3001/api/v1",
+  baseURL: (import.meta as any).env?.VITE_API_URL || ((import.meta as any).env?.PROD ? "https://bms-server-hu2d.onrender.com/api/v1" : "http://localhost:3001/api/v1"),
   headers: { "Content-Type": "application/json" },
 });
 

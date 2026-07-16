@@ -55,10 +55,10 @@ export default function Login() {
           {business?.logo ? (
             <img src={business.logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            <Store size={24} style={{ color: 'var(--accent-blue)' }} />
+            <img src="/mylogo.png" alt="BMS Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           )}
         </div>
-        <h1 className="login-title">Welcome to {business?.name ?? 'My Business'}</h1>
+        <h1 className="login-title">Welcome to {business?.name ?? 'Business Management System'}</h1>
         <p className="login-subtitle">Sign in to manage your business</p>
 
         {error && (
