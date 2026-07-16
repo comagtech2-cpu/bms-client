@@ -85,10 +85,13 @@ export default function Inventory() {
     queryFn: () => api.get('/inventory/movements', { params: { page, limit: 20 } }).then((r) => r.data),
   });
 
-  const { data: products = [] } = useQuery<Product[]>({
-    queryKey: ['products'],
-    queryFn: () => api.get('/products').then((r) => r.data.data ?? r.data),
+  const { data: productsResponse } = useQuery({
+    queryKey: ['products-all'],
+    queryFn: () => api.get('/products', { params: { limit: 1000 } }).then((r) => r.data),
   });
+
+  const products: Product[] = productsResponse?.data ?? [];
+  const totalProducts = productsResponse?.total ?? 0;
 
   const movements: StockMovement[] = inventory?.movements ?? [];
   const total = inventory?.total ?? 0;
@@ -108,7 +111,7 @@ export default function Inventory() {
       {/* Quick Stats */}
       <div className="grid-3 mb-16">
         {[
-          { label: 'Total Products', value: products.length, color: 'blue' },
+          { label: 'Total Products', value: totalProducts, color: 'blue' },
           { label: 'Low Stock Items', value: products.filter((p) => p.stock <= p.minStock && p.stock > 0).length, color: 'orange' },
           { label: 'Out of Stock', value: products.filter((p) => p.stock === 0).length, color: 'red' },
         ].map((stat) => (
