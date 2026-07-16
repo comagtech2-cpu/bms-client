@@ -1,0 +1,22 @@
+{
+  "name": "Business Management System",
+  "short_name": "BMS",
+  "description": "Business Management System for POS, inventory, sales, and analytics.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/mylogo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/mylogo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
