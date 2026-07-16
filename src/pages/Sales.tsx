@@ -8,6 +8,7 @@ import {
   User,
   CheckCircle,
   Printer,
+  Download,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { format } from "date-fns";
@@ -19,6 +20,208 @@ import type { Product, Category, Customer, Transaction } from "../types";
 type PayMethod = "CASH" | "CARD" | "TRANSFER" | "CREDIT";
 
 // ─── Receipt Modal ─────────────────────────────────────────────────────────────
+function downloadReceiptHtml(tx: Transaction, business: any, currency: string, subtotal: number, tax: number, vatRate: number, staffName: string, customerName: string) {
+  const itemsHtml = tx.items?.map((item) => `
+    <tr>
+      <td style="padding: 6px 0; text-align: left; font-weight: 700; word-break: break-word;">${item.product?.name ?? ''}</td>
+      <td style="padding: 6px 0; text-align: center; font-weight: 600;">${item.qty}</td>
+      <td style="padding: 6px 0; text-align: right;">${currency}${item.price.toFixed(2)}</td>
+      <td style="padding: 6px 0; text-align: right; font-weight: 800;">${currency}${(item.qty * item.price).toFixed(2)}</td>
+    </tr>
+  `).join('') ?? '';
+
+  const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receipt #${String(tx.id).padStart(5, "0")}</title>
+<style>
+  @page { size: auto; margin: 0.4in; }
+  body {
+    margin: 0;
+    padding: 20px;
+    background: #ffffff;
+    color: #000000;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    justify-content: center;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .receipt {
+    width: 100%;
+    max-width: 360px;
+    border: 2px solid #000000;
+    padding: 20px 16px;
+    box-sizing: border-box;
+    background: #ffffff;
+    color: #000000;
+  }
+  .header {
+    text-align: center;
+    border-bottom: 2px dashed #000000;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+  .title {
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    color: #000000;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 600;
+  }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+    border-bottom: 2px dashed #000000;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+  .label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #4b5563;
+    text-transform: uppercase;
+  }
+  .value {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000000;
+  }
+  .badge {
+    background: #000000;
+    color: #ffffff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-block;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    table-layout: fixed;
+  }
+  th {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid #000000;
+    color: #000000;
+  }
+  td {
+    color: #000000;
+  }
+  .totals {
+    border-top: 1.5px solid #000000;
+    border-bottom: 2px dashed #000000;
+    padding: 12px 0;
+    margin-bottom: 16px;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #374151;
+  }
+  .row.grand {
+    font-size: 16px;
+    font-weight: 800;
+    margin: 8px 0;
+    padding: 6px 0;
+    border-top: 1px dashed #000000;
+    border-bottom: 1px dashed #000000;
+    color: #000000;
+  }
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #4b5563;
+  }
+  @media print {
+    body { padding: 0; }
+    .receipt { border: 1.5px solid #000000; width: 100%; max-width: 100%; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+<div class="receipt">
+  <div class="header">
+    <div class="title">${business?.name ?? "My Business"}</div>
+    ${business?.address ? `<div class="subtitle">${business.address}</div>` : ""}
+    ${business?.phone ? `<div class="subtitle">${business.phone}</div>` : ""}
+  </div>
+  <div class="meta-grid">
+    <div>
+      <div class="label">Receipt #</div>
+      <div class="value">${String(tx.id).padStart(5, "0")}</div>
+    </div>
+    <div style="text-align: right;">
+      <div class="label">Status</div>
+      <div><span class="badge">PAID</span></div>
+    </div>
+    <div style="margin-top: 6px;">
+      <div class="label">Date & Time</div>
+      <div class="value">${format(new Date(tx.createdAt), "MMM d, yyyy, h:mm a")}</div>
+    </div>
+    <div style="text-align: right; margin-top: 6px;">
+      <div class="label">Served By</div>
+      <div class="value">${staffName}</div>
+    </div>
+  </div>
+  ${(tx.customer || tx.guestName) ? `<div style="font-size: 12px; margin-bottom: 12px; border-bottom: 1px dashed #000000; padding-bottom: 8px; color: #374151;">CUSTOMER: <strong style="color: #000000; font-weight: 800;">${customerName}</strong></div>` : ""}
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align: left; width: 42%;">Item</th>
+        <th style="text-align: center; width: 16%;">Qty</th>
+        <th style="text-align: right; width: 21%;">Price</th>
+        <th style="text-align: right; width: 21%;">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${itemsHtml}
+    </tbody>
+  </table>
+  <div class="totals">
+    <div class="row"><span>Subtotal</span><span>${currency}${subtotal.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+    <div class="row"><span>Tax (VAT ${vatRate}%)</span><span>${currency}${tax.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+    <div class="row grand"><span>GRAND TOTAL</span><span style="font-size: 18px; font-weight: 900; color: #000000;">${currency}${tx.total.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+    <div class="row"><span>Amount Paid (${tx.paymentMethod})</span><span>${currency}${tx.amountPaid.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+    <div class="row"><span>Balance Due</span><span>${currency}${(tx.change > 0 ? 0 : Math.max(0, tx.total - tx.amountPaid)).toFixed(2)}</span></div>
+    ${tx.change > 0 ? `<div class="row" style="color: #000000; font-weight: 700; margin-top: 4px;"><span>Change Given</span><span>${currency}${tx.change.toFixed(2)}</span></div>` : ""}
+  </div>
+  <div class="footer">THANK YOU FOR YOUR BUSINESS!</div>
+</div>
+<script>
+  window.onload = function() { window.print(); };
+</script>
+</body>
+</html>`;
+
+  const blob = new Blob([htmlContent], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `Receipt_${String(tx.id).padStart(5, "0")}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 function ReceiptModal({
   tx,
   business,
@@ -71,10 +274,7 @@ function ReceiptModal({
             </div>
             <div className="receipt-meta-item right">
               <span className="receipt-meta-label">Status</span>
-              <span
-                className="receipt-meta-value"
-                style={{ color: "var(--accent-green)", fontWeight: 800 }}
-              >
+              <span className="receipt-meta-badge">
                 PAID
               </span>
             </div>
@@ -94,13 +294,15 @@ function ReceiptModal({
           {(tx.customer || tx.guestName) && (
             <div
               style={{
-                fontSize: 11,
+                fontSize: 12,
                 marginBottom: 12,
-                color: "var(--text-muted)",
+                color: "#374151",
+                borderBottom: "1px dashed #000000",
+                paddingBottom: 8,
               }}
             >
               CUSTOMER:{" "}
-              <strong style={{ color: "var(--text-primary)" }}>
+              <strong style={{ color: "#000000", fontWeight: 800 }}>
                 {customerName}
               </strong>
             </div>
@@ -110,24 +312,24 @@ function ReceiptModal({
           <table className="receipt-table">
             <thead>
               <tr>
-                <th style={{ textAlign: "left" }}>Item</th>
-                <th style={{ textAlign: "center" }}>Qty</th>
-                <th style={{ textAlign: "right" }}>Price</th>
-                <th style={{ textAlign: "right" }}>Total</th>
+                <th style={{ textAlign: "left", width: "42%" }}>Item</th>
+                <th style={{ textAlign: "center", width: "16%" }}>Qty</th>
+                <th style={{ textAlign: "right", width: "21%" }}>Price</th>
+                <th style={{ textAlign: "right", width: "21%" }}>Total</th>
               </tr>
             </thead>
             <tbody>
               {tx.items?.map((item) => (
                 <tr key={item.id}>
-                  <td style={{ textAlign: "left", fontWeight: 500 }}>
+                  <td style={{ textAlign: "left", fontWeight: 700, color: "#000000" }}>
                     {item.product?.name}
                   </td>
-                  <td style={{ textAlign: "center" }}>{item.qty}</td>
-                  <td style={{ textAlign: "right" }}>
+                  <td style={{ textAlign: "center", fontWeight: 600, color: "#000000" }}>{item.qty}</td>
+                  <td style={{ textAlign: "right", color: "#374151" }}>
                     {currency}
                     {item.price.toFixed(2)}
                   </td>
-                  <td style={{ textAlign: "right", fontWeight: 600 }}>
+                  <td style={{ textAlign: "right", fontWeight: 800, color: "#000000" }}>
                     {currency}
                     {(item.qty * item.price).toFixed(2)}
                   </td>
@@ -159,8 +361,8 @@ function ReceiptModal({
               </span>
             </div>
             <div className="receipt-total-row grand">
-              <span style={{ fontWeight: 700 }}>GRAND TOTAL</span>
-              <span className="receipt-total-row grand-amount">
+              <span style={{ fontWeight: 800, color: "#000000" }}>GRAND TOTAL</span>
+              <span className="receipt-total-row grand-amount" style={{ color: "#000000" }}>
                 {currency}
                 {tx.total.toLocaleString("en", {
                   minimumFractionDigits: 2,
@@ -192,9 +394,9 @@ function ReceiptModal({
               <div
                 className="receipt-total-row"
                 style={{
-                  color: "var(--accent-green)",
-                  fontWeight: 600,
-                  marginTop: 2,
+                  color: "#000000",
+                  fontWeight: 700,
+                  marginTop: 4,
                 }}
               >
                 <span>Change Given</span>
@@ -208,18 +410,11 @@ function ReceiptModal({
 
           <div
             style={{
-              borderTop: "1.5px dashed var(--border)",
-              margin: "16px 0",
-            }}
-          />
-
-          <div
-            style={{
               textAlign: "center",
               fontSize: 11,
               fontWeight: 700,
               letterSpacing: "0.05em",
-              color: "var(--text-muted)",
+              color: "#4b5563",
             }}
           >
             THANK YOU FOR YOUR BUSINESS!
@@ -232,19 +427,25 @@ function ReceiptModal({
               className="receipt-digital-qr"
             />
             <div className="receipt-digital-info">
-              <span className="receipt-digital-title">Digital Copy</span>
+              <span className="receipt-digital-title" style={{ color: "#000000" }}>Digital Copy</span>
               <span className="receipt-digital-desc">
                 Scan this code to download or share your digital receipt.
               </span>
             </div>
           </div>
         </div>
-        <div className="modal-footer">
+        <div className="modal-footer no-print">
           <button className="btn-secondary" onClick={onClose}>
             Close
           </button>
+          <button
+            className="btn-secondary"
+            onClick={() => downloadReceiptHtml(tx, business, currency, subtotal, tax, vatRate, staffName, customerName)}
+          >
+            <Download size={14} /> Download Receipt
+          </button>
           <button className="btn-primary" onClick={() => window.print()}>
-            <Printer size={14} /> Print Receipt
+            <Printer size={14} /> Print / Save PDF
           </button>
         </div>
       </div>
