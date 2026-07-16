@@ -224,130 +224,235 @@ export default function Products() {
               <div className="empty-desc">Add your first product to get started</div>
             </div>
           ) : (
-            <div className="data-table-wrap">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Current Stock</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map((p) => (
-                    <tr key={p.id}>
-                      <td>
-                        <div className="d-flex align-center gap-8">
-                          <div style={{
-                            width: 36, height: 36, borderRadius: 8,
-                            background: `linear-gradient(135deg, ${p.category?.color ?? '#4f7cff'}22, ${p.category?.color ?? '#4f7cff'}44)`,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: 12, fontWeight: 800, color: p.category?.color ?? 'var(--accent-blue)',
-                          }}>
-                            {p.name.charAt(0)}
-                          </div>
-                          <div>
-                            <div className="td-name">{p.name}</div>
-                            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>SKU: {p.sku}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span style={{
-                          fontSize: 12, padding: '2px 8px', borderRadius: 99,
-                          background: `${p.category?.color ?? '#4f7cff'}22`,
-                          color: p.category?.color ?? 'var(--accent-blue)',
-                          fontWeight: 600,
-                        }}>
-                          {p.category?.name ?? '—'}
-                        </span>
-                      </td>
-                      <td style={{ fontWeight: 600 }}>{p.price > 0 ? `${currency}${p.price.toFixed(2)}` : <span style={{ color: 'var(--text-muted)', fontWeight: 400, fontStyle: 'italic' }}>No price</span>}</td>
-                      <td><StockBadge stock={p.stock} minStock={p.minStock} /></td>
-                      <td>
-                        <div className="d-flex gap-8" style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                          {restockId === p.id ? (
-                            <div className="d-flex gap-4" style={{ alignItems: 'center' }}>
-                              <input
-                                type="number"
-                                min={1}
-                                className="form-control"
-                                style={{ width: 64, height: 28, fontSize: 12, padding: '0 6px' }}
-                                placeholder="Qty"
-                                autoFocus
-                                value={restockQty}
-                                onChange={(e) => setRestockQty(e.target.value)}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    const qty = parseInt(restockQty);
-                                    if (qty > 0) restockMutation.mutate({ productId: p.id, qty });
-                                  }
-                                  if (e.key === 'Escape') { setRestockId(null); setRestockQty(''); }
-                                }}
-                              />
-                              <button
-                                className="btn-icon"
-                                style={{ color: '#22c55e', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)' }}
-                                onClick={() => {
-                                  const qty = parseInt(restockQty);
-                                  if (qty > 0) restockMutation.mutate({ productId: p.id, qty });
-                                }}
-                                title="Confirm"
-                              >
-                                <Check size={13} />
-                              </button>
-                              <button
-                                className="btn-icon"
-                                style={{ color: 'var(--text-muted)', background: 'var(--bg-input)', border: '1px solid var(--border)' }}
-                                onClick={() => { setRestockId(null); setRestockQty(''); }}
-                                title="Cancel"
-                              >
-                                <X size={13} />
-                              </button>
+            <>
+              {/* Desktop Table View */}
+              <div className="data-table-wrap desktop-only">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Category</th>
+                      <th>Price</th>
+                      <th>Current Stock</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products.map((p) => (
+                      <tr key={p.id}>
+                        <td>
+                          <div className="d-flex align-center gap-8">
+                            <div style={{
+                              width: 36, height: 36, borderRadius: 8,
+                              background: `linear-gradient(135deg, ${p.category?.color ?? '#4f7cff'}22, ${p.category?.color ?? '#4f7cff'}44)`,
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: 12, fontWeight: 800, color: p.category?.color ?? 'var(--accent-blue)',
+                            }}>
+                              {p.name.charAt(0)}
                             </div>
-                          ) : (
-                            <>
-                              {user?.role === 'OWNER' && (
+                            <div>
+                              <div className="td-name">{p.name}</div>
+                              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>SKU: {p.sku}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span style={{
+                            fontSize: 12, padding: '2px 8px', borderRadius: 99,
+                            background: `${p.category?.color ?? '#4f7cff'}22`,
+                            color: p.category?.color ?? 'var(--accent-blue)',
+                            fontWeight: 600,
+                          }}>
+                            {p.category?.name ?? '—'}
+                          </span>
+                        </td>
+                        <td style={{ fontWeight: 600 }}>{p.price > 0 ? `${currency}${p.price.toFixed(2)}` : <span style={{ color: 'var(--text-muted)', fontWeight: 400, fontStyle: 'italic' }}>No price</span>}</td>
+                        <td><StockBadge stock={p.stock} minStock={p.minStock} /></td>
+                        <td>
+                          <div className="d-flex gap-8" style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                            {restockId === p.id ? (
+                              <div className="d-flex gap-4" style={{ alignItems: 'center' }}>
+                                <input
+                                  type="number"
+                                  min={1}
+                                  className="form-control"
+                                  style={{ width: 64, height: 28, fontSize: 12, padding: '0 6px' }}
+                                  placeholder="Qty"
+                                  autoFocus
+                                  value={restockQty}
+                                  onChange={(e) => setRestockQty(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      const qty = parseInt(restockQty);
+                                      if (qty > 0) restockMutation.mutate({ productId: p.id, qty });
+                                    }
+                                    if (e.key === 'Escape') { setRestockId(null); setRestockQty(''); }
+                                  }}
+                                />
                                 <button
                                   className="btn-icon"
                                   style={{ color: '#22c55e', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)' }}
-                                  onClick={() => { setRestockId(p.id); setRestockQty(''); }}
-                                  title="Add stock"
+                                  onClick={() => {
+                                    const qty = parseInt(restockQty);
+                                    if (qty > 0) restockMutation.mutate({ productId: p.id, qty });
+                                  }}
+                                  title="Confirm"
                                 >
-                                  <Plus size={13} />
+                                  <Check size={13} />
                                 </button>
-                              )}
-                              <button
-                                className="btn-icon"
-                                style={{ color: '#4f7cff', background: 'rgba(79,124,255,0.1)', border: '1px solid rgba(79,124,255,0.25)' }}
-                                onClick={() => { setEditProduct(p); setShowModal(true); }}
-                                title="Edit"
-                              >
-                                <Pencil size={13} />
-                              </button>
-                              {user?.role === 'OWNER' && (
                                 <button
                                   className="btn-icon"
-                                  style={{ color: '#ef4444', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)' }}
-                                  onClick={() => {
-                                    if (confirm(`Delete "${p.name}"?`)) deleteMutation.mutate(p.id);
-                                  }}
-                                  title="Delete"
+                                  style={{ color: 'var(--text-muted)', background: 'var(--bg-input)', border: '1px solid var(--border)' }}
+                                  onClick={() => { setRestockId(null); setRestockQty(''); }}
+                                  title="Cancel"
                                 >
-                                  <Trash2 size={13} />
+                                  <X size={13} />
                                 </button>
-                              )}
-                            </>
-                          )}
+                              </div>
+                            ) : (
+                              <>
+                                {user?.role === 'OWNER' && (
+                                  <button
+                                    className="btn-icon"
+                                    style={{ color: '#22c55e', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)' }}
+                                    onClick={() => { setRestockId(p.id); setRestockQty(''); }}
+                                    title="Add stock"
+                                  >
+                                    <Plus size={13} />
+                                  </button>
+                                )}
+                                <button
+                                  className="btn-icon"
+                                  style={{ color: '#4f7cff', background: 'rgba(79,124,255,0.1)', border: '1px solid rgba(79,124,255,0.25)' }}
+                                  onClick={() => { setEditProduct(p); setShowModal(true); }}
+                                  title="Edit"
+                                >
+                                  <Pencil size={13} />
+                                </button>
+                                {user?.role === 'OWNER' && (
+                                  <button
+                                    className="btn-icon"
+                                    style={{ color: '#ef4444', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)' }}
+                                    onClick={() => {
+                                      if (confirm(`Delete "${p.name}"?`)) deleteMutation.mutate(p.id);
+                                    }}
+                                    title="Delete"
+                                  >
+                                    <Trash2 size={13} />
+                                  </button>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="mobile-only product-list-cards">
+                {products.map((p) => (
+                  <div key={p.id} className="product-mobile-card">
+                    <div className="pm-header">
+                      <div className="pm-name-sku">
+                        <div className="pm-name">{p.name}</div>
+                        <div className="pm-sku">SKU: {p.sku}</div>
+                      </div>
+                      <span className="pm-category-badge" style={{
+                        background: `${p.category?.color ?? '#4f7cff'}22`,
+                        color: p.category?.color ?? 'var(--accent-blue)',
+                      }}>
+                        {p.category?.name ?? '—'}
+                      </span>
+                    </div>
+
+                    <div className="pm-body">
+                      <div className="pm-stat">
+                        <span className="pm-stat-label">Price:</span>
+                        <span className="pm-stat-value">
+                          {p.price > 0 ? `${currency}${p.price.toFixed(2)}` : <span style={{ color: 'var(--text-muted)', fontWeight: 400, fontStyle: 'italic', fontSize: 12 }}>No price</span>}
+                        </span>
+                      </div>
+                      <div className="pm-stat">
+                        <span className="pm-stat-label">Stock:</span>
+                        <StockBadge stock={p.stock} minStock={p.minStock} />
+                      </div>
+                    </div>
+
+                    <div className="pm-actions">
+                      {restockId === p.id ? (
+                        <div className="d-flex gap-4 w-full align-center">
+                          <input
+                            type="number"
+                            min={1}
+                            className="form-control"
+                            style={{ flex: 1, height: 32, fontSize: 13, padding: '0 8px' }}
+                            placeholder="Qty"
+                            autoFocus
+                            value={restockQty}
+                            onChange={(e) => setRestockQty(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                const qty = parseInt(restockQty);
+                                if (qty > 0) restockMutation.mutate({ productId: p.id, qty });
+                              }
+                              if (e.key === 'Escape') { setRestockId(null); setRestockQty(''); }
+                            }}
+                          />
+                          <button
+                            className="btn-icon"
+                            style={{ color: '#22c55e', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)' }}
+                            onClick={() => {
+                              const qty = parseInt(restockQty);
+                              if (qty > 0) restockMutation.mutate({ productId: p.id, qty });
+                            }}
+                          >
+                            <Check size={14} />
+                          </button>
+                          <button
+                            className="btn-icon"
+                            style={{ color: 'var(--text-muted)', background: 'var(--bg-input)', border: '1px solid var(--border)' }}
+                            onClick={() => { setRestockId(null); setRestockQty(''); }}
+                          >
+                            <X size={14} />
+                          </button>
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      ) : (
+                        <>
+                          {user?.role === 'OWNER' && (
+                            <button
+                              className="btn-secondary btn-sm"
+                              style={{ color: '#22c55e', background: 'rgba(34,197,94,0.1)', borderColor: 'rgba(34,197,94,0.2)' }}
+                              onClick={() => { setRestockId(p.id); setRestockQty(''); }}
+                            >
+                              <Plus size={12} style={{ marginRight: 2 }} /> Restock
+                            </button>
+                          )}
+                          <button
+                            className="btn-secondary btn-sm"
+                            onClick={() => { setEditProduct(p); setShowModal(true); }}
+                          >
+                            <Pencil size={12} style={{ marginRight: 2 }} /> Edit
+                          </button>
+                          {user?.role === 'OWNER' && (
+                            <button
+                              className="btn-secondary btn-sm btn-danger-outline"
+                              onClick={() => {
+                                if (confirm(`Delete "${p.name}"?`)) deleteMutation.mutate(p.id);
+                              }}
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>

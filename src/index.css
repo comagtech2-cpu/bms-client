@@ -1621,4 +1621,116 @@ input:-webkit-autofill:active {
   }
 }
 
+/* ─── Desktop/Mobile Visibility Utilities ──────────────────────────────────── */
+.desktop-only {
+  display: block !important;
+}
+.mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: block !important;
+  }
+}
+
+/* ─── Mobile Product Cards Layout ────────────────────────────────────────── */
+.product-list-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-primary);
+}
+.product-mobile-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: var(--transition);
+}
+.product-mobile-card:hover {
+  border-color: var(--border-light);
+  transform: translateY(-2px);
+  background: var(--bg-card-hover);
+}
+.pm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.pm-name-sku {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pm-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+.pm-sku {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.pm-category-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.pm-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed var(--border);
+  border-bottom: 1px dashed var(--border);
+  padding: 8px 0;
+}
+.pm-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.pm-stat-label {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.pm-stat-value {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.pm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 2px;
+}
+.btn-sm {
+  font-size: 12px !important;
+  padding: 5px 10px !important;
+}
+.btn-danger-outline {
+  color: var(--accent-red) !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+}
+.btn-danger-outline:hover {
+  background: var(--accent-red) !important;
+  color: #ffffff !important;
+}
+
+
 
