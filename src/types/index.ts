@@ -19,6 +19,7 @@ export interface BusinessProfile {
   tagline?: string;
   enableCostTracking?: boolean;
   vatRate?: number;
+  modules?: Record<string, boolean>;
 }
 
 export interface Category {

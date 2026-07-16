@@ -69,6 +69,17 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
     queryFn: () => api.get('/settings/business').then((r) => r.data),
   });
 
+  useEffect(() => {
+    if (business && business.modules) {
+      const modulesStr = JSON.stringify(business.modules);
+      if (localStorage.getItem('bms_modules') !== modulesStr) {
+        localStorage.setItem('bms_modules', modulesStr);
+        setActiveModules(business.modules);
+        window.dispatchEvent(new Event('storage-modules-updated'));
+      }
+    }
+  }, [business]);
+
   const handleLogout = () => {
     logout();
     navigate('/login');

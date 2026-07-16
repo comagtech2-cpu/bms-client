@@ -275,11 +275,19 @@ export default function Settings() {
     };
   });
 
+  const updateModulesMutation = useMutation({
+    mutationFn: (modules: Record<string, boolean>) => api.put('/settings/modules', { modules }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['business'] });
+    },
+  });
+
   const handleToggleModule = (moduleId: string) => {
     const updated = { ...activeModules, [moduleId]: !activeModules[moduleId] };
     setActiveModules(updated);
     localStorage.setItem('bms_modules', JSON.stringify(updated));
     window.dispatchEvent(new Event('storage-modules-updated'));
+    updateModulesMutation.mutate(updated);
   };
 
   const { data: staffList = [], refetch: refetchStaff } = useQuery<User[]>({
