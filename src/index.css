@@ -221,7 +221,9 @@ body {
 .topbar-title { font-size: 17px; font-weight: 600; color: var(--text-primary); flex: 1; display: flex; align-items: center; gap: 8px; }
 .topbar-search {
   position: relative;
-  width: 240px;
+  width: min(240px, 40vw);
+  flex: 1;
+  max-width: 240px;
 }
 .topbar-search input {
   width: 100%;
@@ -254,7 +256,7 @@ body {
 /* Notification Dropdown */
 .notif-dropdown {
   position: absolute; top: calc(100% + 8px); right: 0;
-  width: 360px; max-height: 460px;
+  width: min(360px, calc(100vw - 16px)); max-height: 460px;
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   z-index: 2000; display: flex; flex-direction: column; overflow: hidden;
@@ -303,7 +305,7 @@ body {
 }
 .notif-page-btn:hover:not(:disabled) { border-color: var(--accent-blue); color: var(--accent-blue); }
 .notif-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-@media (max-width: 480px) { .notif-dropdown { width: 300px; } }
+@media (max-width: 480px) { .notif-dropdown { width: min(300px, calc(100vw - 12px)); } }
 
 .topbar-user {
   display: flex; align-items: center; gap: 8px;
@@ -1321,69 +1323,172 @@ input:-webkit-autofill:active {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/*  RESPONSIVE — ≤480px (phone)                                               */
+/*  RESPONSIVE — ≤480px (standard mobile phones)                              */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
+  html, body, #root, .app-layout, .main-content {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
   /* Grids → single column */
   .grid-2,
   .grid-3,
-  .grid-4 { grid-template-columns: 1fr !important; }
+  .grid-4,
+  .meta-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
 
   /* Dashboard charts row → single column on phone */
-  .dashboard-charts-row {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Topbar */
-  .topbar { padding: 0 10px; gap: 6px; }
-  .topbar-actions { gap: 4px; }
-  .topbar-btn { width: 30px; height: 30px; }
-
-  /* Page content */
-  .page-content { padding: 12px; }
-
-  /* Stat cards smaller */
-  .stat-value { font-size: 24px; }
-
-  /* Cards */
-  .card { padding: 14px; border-radius: 12px; }
-
-  /* POS */
-  .pos-left { padding: 10px; gap: 8px; }
-  .pos-right { padding: 10px; gap: 8px; }
-
-  /* Modals → near full screen */
-  .modal-overlay { padding: 8px; }
-  .modal-box { border-radius: 14px; padding: 16px; }
-  .modal-header { padding: 14px 16px; }
-  .modal-footer { padding: 12px 16px; flex-direction: column; gap: 8px; }
-  .modal-footer .btn-primary,
-  .modal-footer .btn-secondary { width: 100%; justify-content: center; }
-
-  /* Login */
-  .login-card { padding: 24px 16px; border-radius: 14px; }
-  .login-title { font-size: 22px; }
-
-  /* Product grid (POS) tighter */
-  .product-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)) !important; gap: 8px !important; }
-
-  /* Cart */
-  .cart-items { max-height: 200px; }
-
-  /* Table font sizes */
-  .data-table { font-size: 14px; }
-  .data-table th, .data-table td { padding: 8px 10px; }
-
-  /* Bottom row on dashboard → stack */
+  .dashboard-charts-row,
   .dashboard-bottom-row {
     grid-template-columns: 1fr !important;
   }
 
-  /* Button text truncation */
-  .btn-primary, .btn-secondary { font-size: 14px; padding: 7px 12px; }
+  /* Topbar */
+  .topbar { padding: 0 8px; gap: 6px; }
+  .topbar-actions { gap: 4px; }
+  .topbar-btn { width: 30px; height: 30px; }
+  .topbar-search input { font-size: 13px; padding: 7px 10px; }
 
-  /* Sidebar brand */
-  .sidebar-brand { padding: 14px; }
+  /* Page content & containers */
+  .page-content { padding: 10px; padding-bottom: 74px !important; min-width: 0 !important; max-width: 100vw !important; box-sizing: border-box !important; }
+
+  /* Stat cards smaller */
+  .stat-value { font-size: 22px; }
+  .stat-label { font-size: 13px; }
+
+  /* Cards */
+  .card { padding: 12px; border-radius: 12px; max-width: 100% !important; box-sizing: border-box !important; overflow: hidden; }
+
+  /* POS layout & product cards */
+  .pos-left, .pos-right { padding: 8px; gap: 8px; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
+  .product-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)) !important; gap: 8px !important; }
+
+  /* Modals → perfectly fitting */
+  .modal-overlay { padding: 6px; }
+  .modal-box, .modal-box.wide { border-radius: 12px; padding: 14px !important; max-width: 98vw !important; width: 100% !important; box-sizing: border-box !important; overflow-x: hidden !important; }
+  .modal-header { padding: 12px 14px; flex-wrap: wrap; gap: 8px; }
+  .modal-footer { padding: 10px 14px; flex-direction: column; gap: 8px; }
+  .modal-footer .btn-primary,
+  .modal-footer .btn-secondary,
+  .modal-footer .btn-danger { width: 100%; justify-content: center; }
+
+  /* Login */
+  .login-card { padding: 20px 14px; border-radius: 12px; width: 100% !important; max-width: 96vw !important; }
+  .login-title { font-size: 20px; }
+
+  /* Cart */
+  .cart-items { max-height: 220px; }
+
+  /* Table responsive wrap */
+  .data-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+  }
+  .data-table { min-width: 480px !important; font-size: 13px; }
+  .data-table th, .data-table td { padding: 7px 8px; }
+
+  /* Buttons & Flex elements */
+  .btn-primary, .btn-secondary, .btn-danger { font-size: 13px; padding: 6px 10px; }
+  .d-flex { flex-wrap: wrap; gap: 8px; }
+  .d-flex.justify-between { align-items: flex-start !important; }
+  
+  /* Receipt Container */
+  .receipt-container, #receipt-print-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px 10px !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  RESPONSIVE — ≤380px (compact phones & folding phone cover screens)        */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+  body { font-size: 14px !important; }
+  .page-content { padding: 8px; padding-bottom: 76px !important; }
+  .card { padding: 10px !important; border-radius: 10px !important; }
+  .stat-value { font-size: 18px !important; }
+  .stat-label { font-size: 11px !important; }
+  
+  .product-grid { grid-template-columns: 1fr 1fr !important; gap: 6px !important; }
+  .product-card { padding: 8px !important; }
+  .product-name { font-size: 12px !important; }
+  .product-price { font-size: 12px !important; }
+
+  .data-table { min-width: 380px !important; font-size: 12px !important; }
+  .data-table th, .data-table td { padding: 5px 6px !important; }
+  
+  .modal-box { padding: 10px !important; border-radius: 10px !important; }
+  .btn-primary, .btn-secondary, .btn-danger { font-size: 12px !important; padding: 5px 8px !important; }
+  .topbar-search input { font-size: 12px !important; }
+
+  /* Receipt fits full compact screen */
+  .receipt, .receipt-container, #receipt-print-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px 6px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  RESPONSIVE — ≤320px (ultra-small phones, mini tabs & watches)             */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 320px) {
+  body { font-size: 13px !important; }
+  .page-content { padding: 5px !important; padding-bottom: 78px !important; }
+  .card { padding: 8px !important; border-radius: 8px !important; }
+  
+  /* Force single column for products & grids on watches/mini screens */
+  .product-grid { grid-template-columns: 1fr !important; gap: 5px !important; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr !important; }
+  
+  .topbar { padding: 0 4px !important; gap: 4px !important; }
+  .topbar-search input { font-size: 11px !important; padding: 4px 6px !important; }
+  .hamburger-btn { width: 28px !important; height: 28px !important; }
+  
+  /* Tables adapt down */
+  .data-table { min-width: 280px !important; font-size: 11px !important; }
+  .data-table th, .data-table td { padding: 4px 4px !important; }
+  
+  /* Modals and forms */
+  .modal-box { padding: 8px !important; max-width: 99vw !important; }
+  .modal-title { font-size: 15px !important; }
+  .form-control { font-size: 12px !important; padding: 6px 8px !important; }
+  .form-label { font-size: 12px !important; }
+  
+  /* Bottom navigation adaptation */
+  .mobile-bottom-nav { height: 52px !important; }
+  .mobile-nav-item { padding: 3px 4px !important; font-size: 9px !important; min-width: 40px !important; }
+  .mobile-nav-item svg { width: 17px !important; height: 17px !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════ */
+/*  RESPONSIVE — ≤260px (smartwatches & micro displays)                       */
+/* ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 260px) {
+  body { font-size: 11px !important; }
+  .page-content { padding: 3px !important; padding-bottom: 70px !important; }
+  .card { padding: 6px !important; border-radius: 6px !important; }
+  
+  .stat-value { font-size: 15px !important; }
+  .stat-label { font-size: 10px !important; }
+  
+  /* On wristwatches, hide bottom nav text labels to show clean, crisp icons! */
+  .mobile-bottom-nav { height: 46px !important; }
+  .mobile-nav-item span { display: none !important; }
+  .mobile-nav-item svg { width: 18px !important; height: 18px !important; }
+  .mobile-nav-item { padding: 6px 2px !important; min-width: 30px !important; }
+  
+  /* Buttons and headers compact */
+  .btn-primary, .btn-secondary, .btn-danger { font-size: 11px !important; padding: 4px 6px !important; }
+  .modal-box { padding: 6px !important; }
+  .receipt-container, #receipt-print-area { padding: 6px 4px !important; font-size: 10px !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
@@ -1406,7 +1511,7 @@ input:-webkit-autofill:active {
     background: var(--bg-sidebar);
     border-top: 1px solid var(--border);
     z-index: 150;
-    padding: 0 8px;
+    padding: 0 6px;
     padding-bottom: env(safe-area-inset-bottom);
   }
 
@@ -1416,7 +1521,7 @@ input:-webkit-autofill:active {
     align-items: center;
     justify-content: center;
     gap: 2px;
-    padding: 6px 10px;
+    padding: 6px 8px;
     border-radius: 8px;
     background: none;
     border: none;
@@ -1426,7 +1531,7 @@ input:-webkit-autofill:active {
     cursor: pointer;
     transition: var(--transition);
     text-decoration: none;
-    min-width: 50px;
+    min-width: 44px;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -1447,12 +1552,10 @@ input:-webkit-autofill:active {
     height: 20px;
   }
 
-  /* Add bottom padding to page-content so content doesn't hide behind bottom nav */
   .page-content {
     padding-bottom: 72px;
   }
 
-  /* Topbar gets safe-area-inset-top padding on mobile */
   .topbar {
     padding-top: env(safe-area-inset-top);
     height: calc(var(--topbar-height) + env(safe-area-inset-top));
@@ -1461,41 +1564,31 @@ input:-webkit-autofill:active {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
-/*  ORIENTATION — landscape phone adjustments                                 */
+/*  ORIENTATION — landscape phone & watch adjustments                         */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 @media (max-height: 500px) and (orientation: landscape) {
   .mobile-bottom-nav {
-    height: 48px;
+    height: 46px;
   }
 
   .mobile-nav-item {
-    padding: 4px 8px;
+    padding: 4px 6px;
     font-size: 9px;
   }
 
   .mobile-nav-item svg {
-    width: 18px;
-    height: 18px;
+    width: 17px;
+    height: 17px;
   }
 
   .page-content {
-    padding-bottom: 58px;
+    padding-bottom: 56px;
   }
 
   .topbar {
-    height: 48px;
-    min-height: 48px;
+    height: 44px;
+    min-height: 44px;
   }
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════ */
-/*  RESPONSIVE — Login page tweaks for very small screens                     */
-/* ═══════════════════════════════════════════════════════════════════════════ */
-@media (max-width: 360px) {
-  .login-card { padding: 20px 14px; }
-  .login-title { font-size: 20px; }
-  .stat-value { font-size: 20px; }
-  .stat-label { font-size: 12px; }
 }
 
 

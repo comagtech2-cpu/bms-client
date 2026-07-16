@@ -223,7 +223,7 @@ function TransactionDetail({ tx, business, onClose }: { tx: Transaction; busines
           <h2 className="modal-title">Transaction #{String(tx.id).padStart(5, '0')}</h2>
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+        <div className="meta-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
           {[
             { label: 'Date', value: format(new Date(tx.createdAt), 'MMM d, yyyy hh:mm aa') },
             { label: 'Customer', value: tx.customer?.name ?? tx.guestName ?? 'Guest Customer' },
@@ -238,19 +238,21 @@ function TransactionDetail({ tx, business, onClose }: { tx: Transaction; busines
             </div>
           ))}
         </div>
-        <table className="data-table" style={{ marginBottom: 12 }}>
-          <thead><tr><th>Item</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead>
-          <tbody>
-            {tx.items?.map((item) => (
-              <tr key={item.id}>
-                <td className="td-name">{item.product?.name}</td>
-                <td>{item.qty}</td>
-                <td>{currency}{item.price.toFixed(2)}</td>
-                <td style={{ fontWeight: 600, color: 'var(--accent-blue)' }}>{currency}{(item.qty * item.price).toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="data-table-wrap" style={{ marginBottom: 12 }}>
+          <table className="data-table">
+            <thead><tr><th>Item</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead>
+            <tbody>
+              {tx.items?.map((item) => (
+                <tr key={item.id}>
+                  <td className="td-name">{item.product?.name}</td>
+                  <td>{item.qty}</td>
+                  <td>{currency}{item.price.toFixed(2)}</td>
+                  <td style={{ fontWeight: 600, color: 'var(--accent-blue)' }}>{currency}{(item.qty * item.price).toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, display: 'flex', justifyContent: 'space-between' }}>
           <div style={{ fontSize: 16, fontWeight: 800 }}>Total</div>
           <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--accent-blue)' }}>{currency}{tx.total.toFixed(2)}</div>
