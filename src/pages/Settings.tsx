@@ -402,7 +402,7 @@ export default function Settings() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 16 }}>
+      <div className="settings-layout-grid" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 16 }}>
         {/* Settings Nav */}
         <div className="card" style={{ padding: 8, height: 'fit-content' }}>
           {tabs.map((t) => (

@@ -119,7 +119,7 @@ export default function Categories() {
           <div className="empty-desc">Create your first product category</div>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
+        <div className="category-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
           {categories.map((cat) => (
             <div key={cat.id} className="card" style={{ padding: 16 }}>
               <div className="d-flex justify-between align-center mb-12">

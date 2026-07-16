@@ -156,7 +156,7 @@ export default function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => vo
         <Search className="topbar-search-icon" />
         <input
           type="text"
-          placeholder="Search items, customers..."
+          placeholder="Search..."
           value={query}
           onChange={(e) => { setQuery(e.target.value); setShowResults(true); }}
           onFocus={() => setShowResults(true)}

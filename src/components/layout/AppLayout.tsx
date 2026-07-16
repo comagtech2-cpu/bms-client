@@ -54,7 +54,7 @@ export default function AppLayout() {
   return (
     <div className="app-layout">
       <div className={`sidebar-overlay ${sidebarOpen ? 'visible' : ''}`} onClick={closeSidebar} />
-      <Sidebar isOpen={sidebarOpen} />
+      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
       <div className="main-content">
         <Topbar onToggleSidebar={toggleSidebar} />
         <div className="page-content">

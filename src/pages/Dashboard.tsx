@@ -169,7 +169,7 @@ export default function Dashboard() {
       </div>
 
       {/* Charts Row */}
-      <div className="dashboard-charts-row" style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16, marginBottom: 16 }}>
+      <div className="dashboard-charts-row" style={{ marginBottom: 16 }}>
         {/* Sales Chart */}
         <div className="card">
           <div className="d-flex justify-between align-center mb-16">
@@ -223,48 +223,50 @@ export default function Dashboard() {
       </div>
 
       {/* Bottom Row */}
-      <div className="dashboard-bottom-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="dashboard-bottom-row">
         {/* Top Selling Items */}
         <div className="card">
           <div className="d-flex justify-between align-center mb-16">
             <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: 14 }}>Top Selling Items</div>
             <button className="btn-secondary" style={{ fontSize: 11, padding: '4px 10px' }}>View All</button>
           </div>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Item Name</th>
-                <th>Qty Sold</th>
-                <th>Revenue</th>
-              </tr>
-            </thead>
-            <tbody>
-              {topProducts.map((p) => (
-                <tr key={p.productId}>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div style={{
-                        width: 28, height: 28, borderRadius: 6,
-                        background: 'linear-gradient(135deg, rgba(79,124,255,0.2), rgba(124,58,237,0.2))',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 10, fontWeight: 700, color: 'var(--accent-blue)',
-                      }}>
-                        {p.name.charAt(0)}
-                      </div>
-                      <div>
-                        <div className="td-name" style={{ fontSize: 12 }}>{p.name}</div>
-                        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{p.category}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{p.qtySold}</td>
-                  <td style={{ fontWeight: 600, color: 'var(--accent-green)' }}>
-                    {currency}{p.revenue.toFixed(2)}
-                  </td>
+          <div className="data-table-wrap">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Item Name</th>
+                  <th>Qty Sold</th>
+                  <th>Revenue</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {topProducts.map((p) => (
+                  <tr key={p.productId}>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{
+                          width: 28, height: 28, borderRadius: 6,
+                          background: 'linear-gradient(135deg, rgba(79,124,255,0.2), rgba(124,58,237,0.2))',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 10, fontWeight: 700, color: 'var(--accent-blue)',
+                        }}>
+                          {p.name.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="td-name" style={{ fontSize: 12 }}>{p.name}</div>
+                          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{p.category}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{p.qtySold}</td>
+                    <td style={{ fontWeight: 600, color: 'var(--accent-green)' }}>
+                      {currency}{p.revenue.toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Recent Sales */}

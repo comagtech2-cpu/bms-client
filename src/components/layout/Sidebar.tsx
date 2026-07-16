@@ -22,7 +22,7 @@ const navItems = [
   { to: '/reports', icon: BarChart2, label: 'Reports', module: 'reports' },
 ];
 
-export default function Sidebar({ isOpen }: { isOpen?: boolean }) {
+export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
 
@@ -103,6 +103,7 @@ export default function Sidebar({ isOpen }: { isOpen?: boolean }) {
             to={item.to}
             end={item.end}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            onClick={onClose}
           >
             <item.icon size={16} />
             {item.label}
@@ -118,7 +119,7 @@ export default function Sidebar({ isOpen }: { isOpen?: boolean }) {
             Low Stock Alerts
           </div>
           {lowStock.slice(0, 3).map((p) => (
-            <div key={p.id} className="low-stock-item" onClick={() => navigate('/inventory')}>
+            <div key={p.id} className="low-stock-item" onClick={() => { navigate('/inventory'); onClose?.(); }}>
               <div className="low-stock-item-name">{p.name}</div>
               <div className="low-stock-item-stock">
                 {p.stock === 0 ? 'Out of stock' : `Only ${p.stock} items remaining`}
@@ -134,6 +135,7 @@ export default function Sidebar({ isOpen }: { isOpen?: boolean }) {
           <NavLink
             to="/settings"
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            onClick={onClose}
           >
             <Settings size={16} />
             Settings

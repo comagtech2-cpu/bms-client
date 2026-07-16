@@ -1215,13 +1215,38 @@ input:-webkit-autofill:active {
 }
 .hamburger-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
 
+/* ─── Responsive Grid Defaults (Desktop) ────────────────────────────────── */
+.dashboard-charts-row {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 16px;
+}
+.dashboard-bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.settings-layout-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+}
+.reports-charts-row {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 16px;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /*  RESPONSIVE — ≤1024px (small desktop / landscape tablet / iPad Pro)        */
 /* ═══════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
   .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr) !important; }
   .pos-right { width: 300px; min-width: 300px; }
-  .dashboard-charts-row {
+  .dashboard-charts-row,
+  .dashboard-bottom-row,
+  .settings-layout-grid,
+  .reports-charts-row {
     grid-template-columns: 1fr !important;
   }
   .data-table-wrap {
@@ -1254,6 +1279,7 @@ input:-webkit-autofill:active {
     transform: translateX(-100%);
     z-index: 200;
     box-shadow: none;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
   .sidebar.open {
     transform: translateX(0);
@@ -1269,7 +1295,12 @@ input:-webkit-autofill:active {
   /* Topbar adjustments */
   .topbar { padding: 0 12px; gap: 8px; }
   .topbar-title { display: none; }
-  .topbar-search { flex: 1; min-width: 0; }
+  .topbar-search {
+    width: auto !important;
+    max-width: none !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
   .topbar-search input { width: 100%; font-size: 14px; }
   .topbar-user .user-name,
   .topbar-user .user-role { display: none; }
@@ -1279,7 +1310,11 @@ input:-webkit-autofill:active {
 
   /* Grids → 1 or 2 cols */
   .grid-3, .grid-4 { grid-template-columns: 1fr 1fr !important; }
-  .grid-2 { grid-template-columns: 1fr !important; }
+  .grid-2,
+  .dashboard-charts-row,
+  .dashboard-bottom-row,
+  .settings-layout-grid,
+  .reports-charts-row { grid-template-columns: 1fr !important; }
 
   /* POS → stack */
   .pos-layout { flex-direction: column; }
@@ -1302,11 +1337,6 @@ input:-webkit-autofill:active {
     display: block !important;
   }
   .data-table { min-width: 600px; }
-
-  /* Dashboard charts row → stack */
-  .dashboard-charts-row {
-    grid-template-columns: 1fr !important;
-  }
 
   /* Page header → stack */
   .page-header {

@@ -146,7 +146,7 @@ export default function Reports() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: showCostTracking ? '1fr 280px' : '1fr', gap: 16, marginBottom: 16 }}>
+      <div className="reports-charts-row" style={{ display: 'grid', gridTemplateColumns: showCostTracking ? '1fr 280px' : '1fr', gap: 16, marginBottom: 16 }}>
         {/* Sales Performance Chart */}
         <div className="card">
           <div className="d-flex justify-between align-center mb-16">
@@ -197,7 +197,7 @@ export default function Reports() {
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid-2">
         {/* Best Sellers */}
         <div className="card">
           <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 16 }}>Best Sellers</div>
