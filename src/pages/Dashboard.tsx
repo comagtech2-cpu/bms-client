@@ -104,7 +104,6 @@ export default function Dashboard() {
   const { data: productCount } = useQuery<{ total: number }>({
     queryKey: ['dashboard-product-count'],
     queryFn: () => api.get('/products', { params: { limit: 1 } }).then((r) => r.data),
-    enabled: !creditEnabled,
   });
 
   const hour = new Date().getHours();
