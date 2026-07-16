@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Warehouse, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Plus, Warehouse, TrendingUp, TrendingDown, Minus, ArrowUp, ArrowDown } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -143,50 +143,91 @@ export default function Inventory() {
   const movements: StockMovement[] = inventory?.movements ?? [];
   const total = inventory?.total ?? 0;
 
+  const lowStockCount = products.filter((p) => p.stock <= p.minStock && p.stock > 0).length;
+  const outOfStockCount = products.filter((p) => p.stock === 0).length;
+
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <div className="page-title">Stock Management</div>
-          <div className="page-subtitle">
-            Track all inventory movements and restock history
-          </div>
-        </div>
-        <button
-          className="btn-primary"
-          onClick={() => setShowModal(true)}
-          id="restock-btn"
-        >
-          <Plus size={14} /> Restock
-        </button>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid-3 mb-16">
-        {[
-          { label: "Total Products", value: totalProducts, color: "blue" },
-          {
-            label: "Low Stock Items",
-            value: products.filter((p) => p.stock <= p.minStock && p.stock > 0)
-              .length,
-            color: "orange",
-          },
-          {
-            label: "Out of Stock",
-            value: products.filter((p) => p.stock === 0).length,
-            color: "red",
-          },
-        ].map((stat) => (
-          <div key={stat.label} className={`stat-card ${stat.color}`}>
-            <div className="stat-label">{stat.label}</div>
-            <div className="stat-value" style={{ fontSize: 28 }}>
-              {stat.value}
+      {/* Desktop view header & stats */}
+      <div className="desktop-only">
+        <div className="page-header">
+          <div>
+            <div className="page-title">Stock Management</div>
+            <div className="page-subtitle">
+              Track all inventory movements and restock history
             </div>
           </div>
-        ))}
+          <button
+            className="btn-primary"
+            onClick={() => setShowModal(true)}
+            id="restock-btn"
+          >
+            <Plus size={14} /> Restock
+          </button>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid-3 mb-16">
+          {[
+            { label: "Total Products", value: totalProducts, color: "blue" },
+            {
+              label: "Low Stock Items",
+              value: lowStockCount,
+              color: "orange",
+            },
+            {
+              label: "Out of Stock",
+              value: outOfStockCount,
+              color: "red",
+            },
+          ].map((stat) => (
+            <div key={stat.label} className={`stat-card ${stat.color}`}>
+              <div className="stat-label">{stat.label}</div>
+              <div className="stat-value" style={{ fontSize: 28 }}>
+                {stat.value}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="card" style={{ padding: 0 }}>
+      {/* Mobile view header & stats */}
+      <div className="mobile-only">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <div>
+            <div className="page-title" style={{ margin: 0, fontSize: 20 }}>Stock Management</div>
+            <div className="page-subtitle" style={{ fontSize: 12, marginTop: 2 }}>Track all inventory movements</div>
+          </div>
+          <button
+            className="btn-primary"
+            onClick={() => setShowModal(true)}
+            style={{ borderRadius: 10, padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}
+          >
+            <Plus size={14} /> Restock
+          </button>
+        </div>
+
+        {/* Mobile quick stats layout */}
+        <div className="inventory-stats-mobile">
+          <div className="inv-stat-card blue">
+            <div className="inv-stat-label">Total Products</div>
+            <div className="inv-stat-value">{totalProducts}</div>
+          </div>
+          <div className="inv-stats-row">
+            <div className="inv-stat-card orange">
+              <div className="inv-stat-label">Low Stock</div>
+              <div className="inv-stat-value">{lowStockCount}</div>
+            </div>
+            <div className="inv-stat-card red">
+              <div className="inv-stat-label">Out of Stock</div>
+              <div className="inv-stat-value">{outOfStockCount}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop view movements table */}
+      <div className="card desktop-only" style={{ padding: 0 }}>
         <div
           style={{
             padding: "14px 20px",
@@ -301,6 +342,75 @@ export default function Inventory() {
               ›
             </button>
           </div>
+        )}
+      </div>
+
+      {/* Mobile view movements list */}
+      <div className="mobile-only" style={{ marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: 12, marginBottom: 8 }}>
+          <Warehouse size={16} color="var(--accent-blue)" style={{ marginRight: 6 }} />
+          <span style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>Stock Movement Log</span>
+          <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--text-muted)' }}>{total} total entries</span>
+        </div>
+
+        {movements.length === 0 ? (
+          <div className="card" style={{ padding: 24, textAlign: 'center' }}>
+            <Warehouse size={40} className="empty-icon" style={{ margin: '0 auto 10px' }} />
+            <div className="empty-title">No movements yet</div>
+          </div>
+        ) : (
+          <>
+            <div className="movement-mobile-list">
+              {movements.map((m) => {
+                const isIN = m.type === "IN";
+                return (
+                  <div key={m.id} className="movement-mobile-card">
+                    <div className={`movement-direction-circle ${isIN ? "in" : "out"}`}>
+                      {isIN ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
+                    </div>
+                    <div className="movement-info">
+                      <div className="movement-name">{m.product?.name ?? "Unknown Item"}</div>
+                      <div className="movement-meta">
+                        <span className="movement-cat-badge" style={{
+                          background: `${(m.product?.category as any)?.color ?? "#4f7cff"}22`,
+                          color: (m.product?.category as any)?.color ?? "var(--accent-blue)",
+                        }}>
+                          {m.product?.category?.name ?? "—"}
+                        </span>
+                        <span>• {format(new Date(m.createdAt), "MMM d, hh:mm aa")}</span>
+                      </div>
+                      {m.note && <div className="movement-note">{m.note}</div>}
+                    </div>
+                    <div className={`movement-qty-badge ${isIN ? "in" : "out"}`}>
+                      {isIN ? "+" : "-"}{m.qty}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {total > 20 && (
+              <div className="pagination" style={{ marginTop: 16 }}>
+                <button
+                  className="page-btn"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  ‹
+                </button>
+                <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                  Page {page}
+                </span>
+                <button
+                  className="page-btn"
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={page * 20 >= total}
+                >
+                  ›
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
